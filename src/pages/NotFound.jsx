@@ -1,0 +1,1 @@
+export default function NotFound(){return (<div className='container'><div className='empty'>404 - Not Found</div></div>);}

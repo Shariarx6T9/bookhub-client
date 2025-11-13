@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #020617;
+  --card: #0f172a;
+  --accent: #7c3aed;
+  --accent-2: #06b6ff;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+}
+
+/* Global */
+body {
+  @apply bg-[var(--bg)] text-[var(--text)] font-sans antialiased;
+}
+
+/* Navbar */
+.navbar {
+  @apply sticky top-0 z-40 backdrop-blur-md bg-black/40 border-b border-white/10;
+}
+.brand {
+  @apply flex items-center gap-2 font-bold text-white;
+}
+.logo {
+  @apply flex items-center justify-center w-9 h-9 rounded-lg;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+  font-weight: 800;
+}
+
+/* Buttons */
+.btn {
+  @apply px-4 py-2 rounded-lg text-white font-semibold shadow-md transition;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+.btn:hover {
+  @apply opacity-90;
+}
+.btn-outline {
+  @apply border border-white/10 px-4 py-2 rounded-lg text-white;
+}
+
+/* Layout */
+.container {
+  @apply max-w-6xl mx-auto px-4 py-6;
+}
+
+/* Cards */
+.card {
+  @apply bg-[var(--card)] p-4 rounded-xl shadow-lg hover:-translate-y-1 transition;
+}
+.cover {
+  @apply w-24 h-36 object-cover rounded-lg bg-white/5 flex-shrink-0;
+}
+.badge {
+  @apply inline-block px-3 py-1 rounded-full text-xs font-bold text-black;
+  background: linear-gradient(90deg, #facc15, #f97316);
+}
+
+/* Inputs */
+.input {
+  @apply w-full bg-transparent border border-white/10 rounded-lg px-3 py-2 text-white placeholder:text-white/50;
+}
+
+/* Empty & Loader */
+.empty {
+  @apply text-center text-white/50 py-10;
+}
+.loader {
+  @apply w-12 h-12 border-4 border-white/10 border-t-[var(--accent)] rounded-full animate-spin mx-auto mt-10;
+}
