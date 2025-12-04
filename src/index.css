@@ -36,10 +36,10 @@ body {
   @apply hidden md:flex items-center gap-6;
 }
 .navlinks a {
-  @apply text-white/80 hover:text-white transition px-3 py-2 rounded-lg;
+  @apply text-white/80 hover:text-white transition px-3 py-2 rounded-lg flex items-center gap-2;
 }
 .navlinks a.nav-active {
-  @apply text-white;
+  @apply text-white font-bold;
   background: rgba(124, 58, 237, 0.2);
   border: 1px solid rgba(124, 58, 237, 0.3);
 }
@@ -207,6 +207,75 @@ body {
 }
 .rating-text {
   @apply text-white/60 text-sm;
+}
+
+/* Footer */
+.footer {
+  @apply bg-[var(--card)] border-t border-white/10 mt-16;
+}
+.footer-container {
+  @apply max-w-6xl mx-auto px-4 py-12;
+}
+.footer-content {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-12 mb-8;
+}
+.footer-links-section {
+  @apply space-y-6;
+}
+.footer-links-grid {
+  @apply grid grid-cols-2 gap-3;
+}
+.footer-link {
+  @apply flex items-center gap-3 p-3 rounded-lg bg-white/5 text-white/70 hover:text-white hover:bg-white/10 transition;
+}
+.footer-stats {
+  @apply flex items-center;
+}
+.footer-brand {
+  @apply lg:col-span-1 space-y-4;
+}
+.footer-description {
+  @apply text-white/60 text-sm leading-relaxed;
+}
+.footer-section {
+  @apply space-y-4;
+}
+.footer-title {
+  @apply text-white font-semibold text-lg;
+}
+.footer-links {
+  @apply space-y-2;
+}
+.footer-links li {
+  @apply text-white/60 hover:text-white transition;
+}
+.footer-links a {
+  @apply text-white/60 hover:text-white transition;
+}
+.footer-social {
+  @apply flex gap-3;
+}
+.social-link {
+  @apply w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center text-white/60 hover:text-white transition;
+  background: rgba(124, 58, 237, 0.1);
+}
+.social-link:hover {
+  background: rgba(124, 58, 237, 0.2);
+}
+.footer-bottom {
+  @apply border-t border-white/10 pt-6;
+}
+.footer-bottom-content {
+  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4;
+}
+.footer-copyright {
+  @apply text-white/50 text-sm;
+}
+.footer-bottom-links {
+  @apply flex gap-6;
+}
+.footer-bottom-link {
+  @apply text-white/50 hover:text-white text-sm transition;
 }
 
 /* Card Meta */
