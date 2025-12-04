@@ -83,6 +83,132 @@ body {
   @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
 }
 
+/* My Books Cards */
+.my-book-card {
+  @apply bg-[var(--card)] rounded-xl overflow-hidden border border-white/10 hover:-translate-y-1 transition-all duration-300;
+}
+.book-cover-container {
+  @apply relative;
+}
+.book-cover-container:hover .book-actions {
+  @apply opacity-100;
+}
+.book-cover {
+  @apply w-full h-64 object-cover;
+}
+.book-actions {
+  @apply absolute inset-0 bg-black/60 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity;
+}
+.action-btn {
+  @apply p-3 rounded-full transition-all hover:scale-110;
+}
+.edit-btn {
+  @apply bg-blue-500 hover:bg-blue-600 text-white;
+}
+.delete-btn {
+  @apply bg-red-500 hover:bg-red-600 text-white;
+}
+.book-info {
+  @apply p-4;
+}
+.book-title {
+  @apply font-semibold text-white text-lg mb-1 line-clamp-2;
+}
+.book-meta {
+  @apply text-white/60 text-sm;
+}
+
+/* Book Details Page */
+.book-details-container {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl;
+}
+.book-cover-section {
+  @apply lg:col-span-1 space-y-4;
+}
+.book-detail-cover {
+  @apply w-full max-w-sm mx-auto lg:max-w-none rounded-xl shadow-2xl;
+}
+.owner-actions {
+  @apply space-y-3;
+}
+.book-content-section {
+  @apply lg:col-span-2 space-y-8;
+}
+.book-header {
+  @apply space-y-4;
+}
+.book-detail-title {
+  @apply text-4xl font-bold text-white leading-tight;
+}
+.book-detail-author {
+  @apply text-xl text-white/80 font-medium;
+}
+.book-detail-meta {
+  @apply flex flex-wrap items-center gap-4;
+}
+.genre-tag {
+  @apply px-3 py-1 rounded-full text-sm font-medium;
+  background: rgba(124, 58, 237, 0.2);
+  color: var(--accent-2);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+.rating-section {
+  @apply flex items-center gap-2;
+}
+.rating-text {
+  @apply text-white/60 text-sm;
+}
+.book-summary-section {
+  @apply bg-[var(--card)] p-6 rounded-xl border border-white/10;
+}
+.section-title {
+  @apply text-lg font-semibold text-white mb-4;
+}
+.book-summary {
+  @apply text-white/80 leading-relaxed;
+}
+.book-meta-section {
+  @apply bg-[var(--card)] p-6 rounded-xl border border-white/10;
+}
+.meta-grid {
+  @apply grid grid-cols-1 sm:grid-cols-3 gap-4;
+}
+.meta-item {
+  @apply space-y-1;
+}
+.meta-label {
+  @apply text-white/60 text-sm;
+}
+.meta-value {
+  @apply text-white font-medium;
+}
+
+/* Enhanced Book Details */
+.book-cover-wrapper {
+  @apply relative;
+}
+.book-cover-skeleton {
+  @apply absolute inset-0 bg-white/5 rounded-xl flex items-center justify-center;
+}
+.book-actions-section {
+  @apply mt-6 space-y-3;
+}
+.reader-actions {
+  @apply space-y-3;
+}
+.book-rating-showcase {
+  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6 p-4 bg-white/5 rounded-xl;
+}
+.rating-display {
+  @apply flex items-center gap-3;
+}
+.rating-number {
+  @apply text-2xl font-bold text-white;
+}
+.rating-text {
+  @apply text-white/60 text-sm;
+}
+
 /* Card Meta */
 .meta {
   @apply flex-1 space-y-2;
@@ -149,9 +275,39 @@ body {
   @apply text-3xl font-bold text-white mb-8;
 }
 
+/* Form Layout */
+.form-container {
+  @apply bg-[var(--card)] p-8 rounded-2xl border border-white/10;
+}
+.form-grid {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+.form-fields {
+  @apply lg:col-span-2 space-y-4;
+}
+.preview-section {
+  @apply space-y-4;
+}
+.preview-box {
+  @apply w-full h-80 bg-white/5 border-2 border-dashed border-white/20 rounded-xl flex items-center justify-center overflow-hidden;
+}
+.file-input {
+  @apply block w-full text-sm text-white/60;
+}
+.file-input::-webkit-file-upload-button {
+  @apply mr-4 py-2 px-4 rounded-lg border-0 text-white transition cursor-pointer;
+  background: var(--accent);
+}
+.file-input::-webkit-file-upload-button:hover {
+  background: var(--accent-2);
+}
+
 /* Inputs */
 .input {
   @apply w-full bg-transparent border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/50 focus:border-[var(--accent-2)] focus:outline-none transition;
+}
+textarea.input {
+  @apply resize-none;
 }
 
 /* Empty & Loader */
