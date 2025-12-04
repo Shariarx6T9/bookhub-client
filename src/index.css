@@ -20,6 +20,9 @@ body {
 .navbar {
   @apply sticky top-0 z-40 backdrop-blur-md bg-black/40 border-b border-white/10;
 }
+.wrap {
+  @apply max-w-6xl mx-auto px-4 py-3 flex items-center justify-between;
+}
 .brand {
   @apply flex items-center gap-2 font-bold text-white;
 }
@@ -28,6 +31,15 @@ body {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: white;
   font-weight: 800;
+}
+.navlinks {
+  @apply hidden md:flex items-center gap-6;
+}
+.navlinks a {
+  @apply text-white/80 hover:text-white transition;
+}
+.auth-buttons {
+  @apply flex items-center gap-3;
 }
 
 /* Buttons */

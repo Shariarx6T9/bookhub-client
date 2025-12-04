@@ -20,8 +20,8 @@ export default function Navbar({ user }) {
         <Link to="/" className="brand">
           <div className="logo">B</div>
           <div>
-            <div style={{fontSize:13,color:'#111'}}>BookHub</div>
-            <div style={{fontSize:11,color:'var(--muted)'}}>Books • Reviews • Manage</div>
+            <div className="text-sm text-white">BookHub</div>
+            <div className="text-xs text-white/60">Books • Reviews • Manage</div>
           </div>
         </Link>
 
@@ -40,10 +40,10 @@ export default function Navbar({ user }) {
             </>
           ) : (
             <>
-              <div style={{display:'flex',alignItems:'center',gap:8}}>
-                {user.photoURL && <img src={user.photoURL} alt="avatar" style={{width:36,height:36,borderRadius:10}} />}
-                <div style={{fontSize:13}}>{user.displayName || user.email}</div>
-                <button onClick={handleLogout} className="btn" style={{background:'#ef4444'}}>Logout</button>
+              <div className="flex items-center gap-2">
+                {user.photoURL && <img src={user.photoURL} alt="avatar" className="w-9 h-9 rounded-lg" />}
+                <div className="text-sm text-white hidden sm:block">{user.displayName || user.email}</div>
+                <button onClick={handleLogout} className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition">Logout</button>
               </div>
             </>
           )}
