@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import AllBooks from './pages/AllBooks';
 import AddBook from './pages/AddBook';
@@ -28,19 +29,24 @@ export default function App(){
 
   return (
     <BrowserRouter>
-      <Navbar user={user} />
-      <Toaster position="top-center" />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/all-books" element={<AllBooks />} />
-        <Route path="/add-book" element={user ? <AddBook user={user} /> : <Login />} />
-        <Route path="/my-books" element={user ? <MyBooks user={user} /> : <Login />} />
-        <Route path="/update-book/:id" element={user ? <UpdateBook user={user} /> : <Login />} />
-        <Route path="/book/:id" element={user ? <BookDetails user={user} /> : <Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div className="min-h-screen flex flex-col">
+        <Navbar user={user} />
+        <main className="flex-1">
+          <Toaster position="top-center" />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/all-books" element={<AllBooks />} />
+            <Route path="/add-book" element={user ? <AddBook user={user} /> : <Login />} />
+            <Route path="/my-books" element={user ? <MyBooks user={user} /> : <Login />} />
+            <Route path="/update-book/:id" element={user ? <UpdateBook user={user} /> : <Login />} />
+            <Route path="/book/:id" element={<BookDetails user={user} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }
