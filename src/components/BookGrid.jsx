@@ -7,7 +7,7 @@ export default function BookGrid({ books }) {
     return <div className="empty">No books yet. Try adding one 😊</div>;
   }
   return (
-    <div className="grid">
+    <div className="book-grid">
       {books.map(b => <BookCard key={b._id} book={b} />)}
     </div>
   );

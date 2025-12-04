@@ -7,12 +7,20 @@ export default function BookCard({ book }) {
     <article className="card" role="article">
       <img className="cover" src={book.coverUrl} alt={book.title} />
       <div className="meta">
-        <h3><Link to={`/book/${book._id}`} style={{textDecoration:'none', color:'#111'}}>{book.title}</Link></h3>
-        <p style={{fontWeight:600}}>{book.author} • <span style={{color:'var(--muted)',fontWeight:500}}>{book.genre}</span></p>
-        <p style={{color:'var(--muted)',fontSize:14}}>{book.summary?.slice(0,120)}{book.summary && book.summary.length>120?'...':''}</p>
+        <h3>
+          <Link to={`/book/${book._id}`} className="text-white hover:text-white/80 transition">
+            {book.title}
+          </Link>
+        </h3>
+        <p className="font-semibold text-white/90">
+          {book.author} • <span className="text-white/60 font-medium">{book.genre}</span>
+        </p>
+        <p className="text-white/60 text-sm leading-relaxed">
+          {book.summary?.slice(0,120)}{book.summary && book.summary.length>120?'...':''}
+        </p>
         <div className="row">
           <div className="badge">⭐ {book.rating}</div>
-          <div style={{color:'var(--muted)',fontSize:13}}>{book.userName}</div>
+          <div className="text-white/50 text-xs">{book.userName}</div>
         </div>
       </div>
     </article>

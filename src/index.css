@@ -59,9 +59,42 @@ body {
   @apply max-w-6xl mx-auto px-4 py-6;
 }
 
+/* Hero Section */
+.hero {
+  @apply flex flex-col lg:flex-row items-center gap-8 py-12 mb-16;
+}
+.hero .left {
+  @apply flex-1 text-center lg:text-left;
+}
+.hero h1 {
+  @apply text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight;
+}
+.hero p {
+  @apply text-lg text-white/80 mb-6 max-w-lg;
+}
+
+/* Grid */
+.book-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+/* Card Meta */
+.meta {
+  @apply flex-1 space-y-2;
+}
+.meta h3 {
+  @apply font-semibold text-white text-lg;
+}
+.meta h3 a {
+  @apply text-white hover:text-white/80 transition;
+}
+.row {
+  @apply flex items-center justify-between mt-3;
+}
+
 /* Cards */
 .card {
-  @apply bg-[var(--card)] p-4 rounded-xl shadow-lg hover:-translate-y-1 transition;
+  @apply bg-[var(--card)] p-4 rounded-xl shadow-lg hover:-translate-y-1 transition flex gap-4;
 }
 .cover {
   @apply w-24 h-36 object-cover rounded-lg bg-white/5 flex-shrink-0;
