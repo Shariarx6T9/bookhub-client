@@ -36,7 +36,12 @@ body {
   @apply hidden md:flex items-center gap-6;
 }
 .navlinks a {
-  @apply text-white/80 hover:text-white transition;
+  @apply text-white/80 hover:text-white transition px-3 py-2 rounded-lg;
+}
+.navlinks a.nav-active {
+  @apply text-white;
+  background: rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(124, 58, 237, 0.3);
 }
 .auth-buttons {
   @apply flex items-center gap-3;

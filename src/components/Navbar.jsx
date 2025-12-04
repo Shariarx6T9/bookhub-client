@@ -1,12 +1,13 @@
 // client/src/components/Navbar.jsx
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 import toast from "react-hot-toast";
 
 export default function Navbar({ user }) {
   const nav = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -26,10 +27,10 @@ export default function Navbar({ user }) {
         </Link>
 
         <nav className="navlinks" aria-label="Main navigation">
-          <Link to="/">Home</Link>
-          <Link to="/all-books">All Books</Link>
-          {user && <Link to="/my-books">My Books</Link>}
-          {user && <Link to="/add-book">Add Book</Link>}
+          <Link to="/" className={location.pathname === '/' ? 'nav-active ' : ''}>Home</Link>
+          <Link to="/all-books" className={location.pathname === '/all-books' ? 'nav-active' : ''}>All Books</Link>
+          {user && <Link to="/my-books" className={location.pathname === '/my-books' ? 'nav-active' : ''}>My Books</Link>}
+          {user && <Link to="/add-book" className={location.pathname === '/add-book' ? 'nav-active' : ''}>Add Book</Link>}
         </nav>
 
         <div className="auth-buttons">
@@ -41,7 +42,7 @@ export default function Navbar({ user }) {
           ) : (
             <>
               <div className="flex items-center gap-2">
-                {user.photoURL && <img src={user.photoURL} alt="avatar" className="w-9 h-9 rounded-lg" />}
+                {user.photoURL && <img src={user.photoURL} alt="avatar" className="w-9 h-9 rounded-xl " />}
                 <div className="text-sm text-white hidden sm:block">{user.displayName || user.email}</div>
                 <button onClick={handleLogout} className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition">Logout</button>
               </div>
