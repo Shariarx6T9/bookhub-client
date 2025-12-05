@@ -1,18 +1,16 @@
-// client/src/pages/AllBooks.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import axios from "../services/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
-import BookGrid from "../components/BookGrid";
 import toast from "react-hot-toast";
 
-export default function AllBooks() {
+const AllBooks = React.memo(({ user }) => {
   const [books, setBooks] = useState([]);
   const [order, setOrder] = useState("desc");
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const fetch = async () => {
+  const fetchBooks = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axios.get(`/books?sort=rating&order=${order}&q=${encodeURIComponent(q)}`);
@@ -22,22 +20,62 @@ export default function AllBooks() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [order, q]);
 
-  useEffect(() => { fetch(); }, [order]);
+  const handleDelete = useCallback(async (bookId) => {
+    if (!window.confirm('Are you sure you want to delete this book?')) return;
+    
+    try {
+      await axios.delete(`/books/${bookId}`);
+      toast.success('Book deleted successfully');
+      fetchBooks();
+    } catch (err) {
+      toast.error('Failed to delete book');
+    }
+  }, [fetchBooks]);
+
+  const handleSearch = useCallback((e) => {
+    e.preventDefault();
+    fetchBooks();
+  }, [fetchBooks]);
+
+  const getRatingStars = useCallback((rating) => {
+    const fullStars = Math.floor(rating);
+    const emptyStars = 5 - fullStars;
+    return (
+      <div className="flex items-center gap-1">
+        {Array(fullStars).fill(0).map((_, i) => (
+          <span key={`full-${i}`} className="text-yellow-400">★</span>
+        ))}
+        {Array(emptyStars).fill(0).map((_, i) => (
+          <span key={`empty-${i}`} className="text-white/20">★</span>
+        ))}
+      </div>
+    );
+  }, []);
+
+  const resultsText = useMemo(() => {
+    if (books.length === 0) return null;
+    const count = `${books.length} book${books.length !== 1 ? 's' : ''}`;
+    return q ? `${count} matching "${q}"` : count;
+  }, [books.length, q]);
+
+  useEffect(() => {
+    fetchBooks();
+  }, [order]);
 
   return (
     <div className="container">
       <h1 className="page-title">All Books</h1>
       
       <div className="search-section">
-        <form onSubmit={(e) => { e.preventDefault(); fetch(); }} className="search-form">
+        <form onSubmit={handleSearch} className="search-form">
           <div className="flex-1 flex gap-3">
             <input 
               className="search-input" 
               placeholder="Search by title, author, or genre..." 
               value={q} 
-              onChange={e=>setQ(e.target.value)} 
+              onChange={e => setQ(e.target.value)} 
             />
             <button className="btn px-6" type="submit">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,17 +83,14 @@ export default function AllBooks() {
               </svg>
             </button>
           </div>
-          <select className="filter-select" value={order} onChange={e=>setOrder(e.target.value)}>
+          <select className="filter-select" value={order} onChange={e => setOrder(e.target.value)}>
             <option value="desc">⭐ Rating: High → Low</option>
             <option value="asc">⭐ Rating: Low → High</option>
           </select>
         </form>
         
-        {books.length > 0 && !loading && (
-          <div className="mt-4 text-white/60 text-sm">
-            Found {books.length} book{books.length !== 1 ? 's' : ''}
-            {q && ` matching "${q}"`}
-          </div>
+        {resultsText && !loading && (
+          <div className="mt-4 text-white/60 text-sm">Found {resultsText}</div>
         )}
       </div>
 
@@ -68,12 +103,96 @@ export default function AllBooks() {
             {q ? 'No books found' : 'No books available'}
           </h3>
           <p className="text-white/60">
-            {q ? `Try searching for something else` : 'Be the first to add a book!'}
+            {q ? 'Try searching for something else' : 'Be the first to add a book!'}
           </p>
         </div>
       ) : (
-        <BookGrid books={books} />
+        <div className="books-table-container">
+          <div className="overflow-x-auto">
+            <table className="books-table">
+              <thead>
+                <tr>
+                  <th>Book Name</th>
+                  <th>Author</th>
+                  <th>Genre</th>
+                  <th>Rating</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {books.map((book) => {
+                  const isOwner = user?.email === book.userEmail;
+                  return (
+                    <tr key={book._id}>
+                      <td className="book-title-cell">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={book.coverUrl} 
+                            alt={book.title} 
+                            className="w-12 h-16 object-cover rounded"
+                            loading="lazy"
+                          />
+                          <span className="font-medium">{book.title}</span>
+                        </div>
+                      </td>
+                      <td className="author-cell">{book.author}</td>
+                      <td>
+                        <span className="genre-badge">{book.genre}</span>
+                      </td>
+                      <td>
+                        <div className="rating-display">
+                          <div className="rating-stars">
+                            {getRatingStars(book.rating)}
+                          </div>
+                          <span className="rating-number">{book.rating}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="actions-container">
+                          <Link 
+                            to={`/book/${book._id}`} 
+                            className="action-btn view-btn"
+                            title="View Details"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          </Link>
+                          {isOwner && (
+                            <>
+                              <Link 
+                                to={`/update-book/${book._id}`} 
+                                className="action-btn edit-btn"
+                                title="Edit Book"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </Link>
+                              <button 
+                                onClick={() => handleDelete(book._id)}
+                                className="action-btn delete-btn"
+                                title="Delete Book"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   );
-}
+});
+
+export default AllBooks;

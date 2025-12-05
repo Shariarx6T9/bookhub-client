@@ -1,14 +1,16 @@
-// client/src/components/BookGrid.jsx
 import React from "react";
 import BookCard from "./BookCard";
 
-export default function BookGrid({ books }) {
-  if (!books || books.length === 0) {
+const BookGrid = React.memo(({ books }) => {
+  if (!books?.length) {
     return <div className="empty">No books yet. Try adding one 😊</div>;
   }
+  
   return (
     <div className="book-grid">
-      {books.map(b => <BookCard key={b._id} book={b} />)}
+      {books.map(book => <BookCard key={book._id} book={book} />)}
     </div>
   );
-}
+});
+
+export default BookGrid;

@@ -3,36 +3,77 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from "
 import { auth, googleProvider } from "../firebase/firebaseConfig";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Register(){
   const nav = useNavigate();
   const [form, setForm] = useState({ name:'', email:'', photo:'', password:'' });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const validatePass = (pw) => {
-    if (pw.length < 6) return false;
-    if (!/[A-Z]/.test(pw)) return false;
-    if (!/[a-z]/.test(pw)) return false;
-    return true;
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 6) errors.push("At least 6 characters");
+    if (!/[A-Z]/.test(password)) errors.push("One uppercase letter");
+    if (!/[a-z]/.test(password)) errors.push("One lowercase letter");
+    return errors;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    
+    if (name === 'password') {
+      const passwordErrors = validatePassword(value);
+      setErrors({ ...errors, password: passwordErrors });
+    }
   };
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!validatePass(form.password)) {
-      toast.error("Password must be ≥6 chars, include 1 uppercase and 1 lowercase");
+    const passwordErrors = validatePassword(form.password);
+    
+    if (passwordErrors.length > 0) {
+      toast.error(`Password requirements: ${passwordErrors.join(', ')}`);
       return;
     }
+    
+    setLoading(true);
     try{
       const cred = await createUserWithEmailAndPassword(auth, form.email, form.password);
       if (form.name || form.photo) {
-        await updateProfile(cred.user, { displayName: form.name || undefined, photoURL: form.photo || undefined });
+        await updateProfile(cred.user, { 
+          displayName: form.name || null, 
+          photoURL: form.photo || null 
+        });
       }
-      toast.success("Registered");
+      toast.success("🎉 Account created successfully! Welcome to BookHub!", {
+        duration: 3000,
+        style: {
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          color: 'white',
+          fontWeight: '600'
+        }
+      });
       nav("/");
-    }catch(err){ toast.error(err.message); }
+    } catch(err) { 
+      toast.error(err.message.replace('Firebase: ', ''));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const google = async () => {
-    try{ await signInWithPopup(auth, googleProvider); toast.success("Logged in with Google"); nav("/"); } catch(err){ toast.error(err.message); }
+    setLoading(true);
+    try{ 
+      await signInWithPopup(auth, googleProvider); 
+      toast.success("🎉 Welcome to BookHub!"); 
+      nav("/"); 
+    } catch(err) { 
+      toast.error(err.message.replace('Firebase: ', ''));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,38 +81,82 @@ export default function Register(){
       <div className="auth-card">
         <h1 className="auth-title">Create Account</h1>
         <form onSubmit={submit} className="auth-form">
-          <input 
-            className="input" 
-            value={form.name} 
-            onChange={e=>setForm({...form, name:e.target.value})} 
-            placeholder="Full Name (optional)" 
-          />
-          <input 
-            className="input" 
-            value={form.email} 
-            onChange={e=>setForm({...form, email:e.target.value})} 
-            required 
-            type="email"
-            placeholder="Email address" 
-          />
-          <input 
-            className="input" 
-            value={form.photo} 
-            onChange={e=>setForm({...form, photo:e.target.value})} 
-            placeholder="Photo URL (optional)" 
-          />
-          <input 
-            className="input" 
-            value={form.password} 
-            onChange={e=>setForm({...form, password:e.target.value})} 
-            required 
-            type="password" 
-            placeholder="Password (6+ chars, 1 upper, 1 lower)" 
-          />
-          <button className="btn w-full" type="submit">Create Account</button>
+          <div>
+            <input 
+              name="name"
+              className="input" 
+              value={form.name} 
+              onChange={handleChange}
+              placeholder="Full Name" 
+            />
+          </div>
+          
+          <div>
+            <input 
+              name="email"
+              className="input" 
+              value={form.email} 
+              onChange={handleChange}
+              required 
+              type="email"
+              placeholder="Email Address" 
+            />
+          </div>
+          
+          <div>
+            <input 
+              name="photo"
+              className="input" 
+              value={form.photo} 
+              onChange={handleChange}
+              type="url"
+              placeholder="Photo URL (optional)" 
+            />
+          </div>
+          
+          <div>
+            <input 
+              name="password"
+              className="input" 
+              value={form.password} 
+              onChange={handleChange}
+              required 
+              type="password" 
+              placeholder="Password" 
+            />
+            {errors.password && errors.password.length > 0 && (
+              <div className="mt-2 text-sm text-red-400">
+                <p className="mb-1">Password must include:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  {errors.password.map((error, i) => (
+                    <li key={i}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          
+          <button 
+            className="btn w-full" 
+            type="submit" 
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <LoadingSpinner size={20} />
+                Creating Account...
+              </span>
+            ) : (
+              'Register'
+            )}
+          </button>
         </form>
         <hr className="auth-divider" />
-        <button className="btn w-full bg-white text-black hover:bg-gray-100" onClick={google}>
+        <button 
+          className="btn w-full bg-white text-black hover:bg-gray-100" 
+          onClick={google}
+          disabled={loading}
+        >
           <span className="flex items-center justify-center gap-2">
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

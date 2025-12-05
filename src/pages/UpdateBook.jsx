@@ -48,8 +48,15 @@ export default function UpdateBook({ user }) {
       }
       const payload = { ...book, rating: Number(book.rating), coverUrl: image };
       await axios.put(`/books/${id}`, payload);
-      toast.success("Book updated successfully");
-      nav(`/book/${id}`);
+      toast.success("✅ Book updated successfully! Redirecting to book details...", {
+        duration: 3000,
+        style: {
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          color: 'white',
+          fontWeight: '600'
+        }
+      });
+      setTimeout(() => nav(`/book/${id}`), 1500);
     } catch (err) {
       console.error('Update error:', err);
       toast.error("Failed to update book");

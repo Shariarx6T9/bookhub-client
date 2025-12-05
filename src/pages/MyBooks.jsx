@@ -85,51 +85,75 @@ export default function MyBooks({ user }) {
           </Link>
         </div>
       ) : (
-        <div className="book-grid">
-          {books.map((b) => (
-            <div key={b._id} className="my-book-card">
-              <div className="book-cover-container">
-                <img
-                  src={b.coverUrl}
-                  alt={b.title}
-                  className="book-cover"
-                />
-                <div className="book-actions">
-                  <Link 
-                    to={`/update-book/${b._id}`} 
-                    className="action-btn edit-btn"
-                    title="Edit book"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </Link>
-                  <button
-                    onClick={() => remove(b._id)}
-                    className="action-btn delete-btn"
-                    title="Delete book"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div className="book-info">
-                <h3 className="book-title">{b.title}</h3>
-                <p className="book-meta">{b.author} • {b.genre}</p>
-                <div className="flex items-center justify-between mt-3">
-                  <div className="badge">⭐ {b.rating}</div>
-                  <Link 
-                    to={`/book/${b._id}`} 
-                    className="text-[var(--accent-2)] hover:text-[var(--accent)] text-sm font-medium transition"
-                  >
-                    View Details →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="books-table-container">
+          <div className="overflow-x-auto">
+            <table className="books-table">
+              <thead>
+                <tr>
+                  <th>Book Name</th>
+                  <th>Author</th>
+                  <th>Genre</th>
+                  <th>Rating</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {books.map((book) => (
+                  <tr key={book._id}>
+                    <td className="book-title-cell">
+                      <div className="flex items-center gap-4">
+                        <img 
+                          src={book.coverUrl} 
+                          alt={book.title} 
+                          className="w-14 h-20 object-cover rounded-xl shadow-2xl border-2 border-white/30 flex-shrink-0"
+                        />
+                        <span className="font-bold text-white text-sm leading-tight truncate">{book.title}</span>
+                      </div>
+                    </td>
+                    <td className="author-cell">{book.author}</td>
+                    <td>
+                      <span className="genre-badge">{book.genre}</span>
+                    </td>
+                    <td>
+                      <div className="rating-display">
+                        <div className="rating-stars">
+                          {[...Array(Math.floor(book.rating))].map((_, i) => (
+                            <span key={i} className="text-yellow-400">★</span>
+                          ))}
+                          {[...Array(5 - Math.floor(book.rating))].map((_, i) => (
+                            <span key={i} className="text-white/20">★</span>
+                          ))}
+                        </div>
+                        <span className="rating-number">{book.rating}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="actions-container">
+                        <Link 
+                          to={`/update-book/${book._id}`} 
+                          className="action-btn edit-btn"
+                          title="Edit Book"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </Link>
+                        <button 
+                          onClick={() => remove(book._id)}
+                          className="action-btn delete-btn"
+                          title="Delete Book"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
