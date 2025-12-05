@@ -4,11 +4,13 @@ import axios from "../services/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 import BookGrid from "../components/BookGrid";
 import toast from "react-hot-toast";
+import { useApiProtection } from "../hooks/useApiProtection";
 
 const Home = React.memo(() => {
   const [topBooks, setTopBooks] = useState([]);
   const [latestBooks, setLatestBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { protectedRequest, cancelAll } = useApiProtection();
 
   const genres = useMemo(() => [
     { name: "Fiction", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400", count: "120+" },
@@ -40,22 +42,31 @@ const Home = React.memo(() => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [topRes, latestRes] = await Promise.all([
-          axios.get("/books?sort=rating&order=desc&limit=6"),
-          axios.get("/books?sort=createdAt&order=desc&limit=6")
-        ]);
-        setTopBooks(topRes.data);
-        setLatestBooks(latestRes.data);
-      } catch (err) {
-        toast.error("Failed to load books");
-      } finally {
-        setLoading(false);
-      }
+      const [topResult, latestResult] = await Promise.all([
+        protectedRequest(
+          async (signal) => {
+            const res = await axios.get("/books?sort=rating&order=desc&limit=6", { signal });
+            return res.data;
+          },
+          "fetch-top-books"
+        ),
+        protectedRequest(
+          async (signal) => {
+            const res = await axios.get("/books?sort=createdAt&order=desc&limit=6", { signal });
+            return res.data;
+          },
+          "fetch-latest-books"
+        )
+      ]);
+      
+      setTopBooks(topResult || []);
+      setLatestBooks(latestResult || []);
+      setLoading(false);
     };
 
     fetchData();
-  }, []);
+    return cancelAll;
+  }, [protectedRequest, cancelAll]);
 
   return (
     <div className="min-h-screen">

@@ -34,7 +34,7 @@ const App = React.memo(() => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="min-h-screen flex flex-col">
         <Navbar user={user} />
         <main className="flex-1">

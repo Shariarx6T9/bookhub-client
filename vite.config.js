@@ -9,14 +9,10 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          firebase: ['firebase/auth', 'firebase/app'],
+          firebase: ['firebase/auth'],
           ui: ['react-hot-toast']
         }
       }
-    },
-    chunkSizeWarningLimit: 1000
-  },
-  server: {
-    port: 3000
+    }
   }
 })

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "../services/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 import toast from "react-hot-toast";
+import { useApiProtection } from "../hooks/useApiProtection";
 
 const AllBooks = React.memo(({ user }) => {
   const [books, setBooks] = useState([]);
@@ -10,29 +11,38 @@ const AllBooks = React.memo(({ user }) => {
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const { protectedRequest, cancelAll } = useApiProtection();
+
   const fetchBooks = useCallback(async () => {
     setLoading(true);
-    try {
-      const res = await axios.get(`/books?sort=rating&order=${order}&q=${encodeURIComponent(q)}`);
-      setBooks(res.data);
-    } catch (err) {
-      toast.error("Failed to fetch books");
-    } finally {
-      setLoading(false);
-    }
-  }, [order, q]);
+    const result = await protectedRequest(
+      async (signal) => {
+        const res = await axios.get(`/books?sort=rating&order=${order}&q=${encodeURIComponent(q)}`, { signal });
+        return res.data;
+      },
+      `fetch-books-${order}-${q}`
+    );
+    
+    setBooks(result || []);
+    setLoading(false);
+  }, [order, q, protectedRequest]);
 
   const handleDelete = useCallback(async (bookId) => {
     if (!window.confirm('Are you sure you want to delete this book?')) return;
     
-    try {
-      await axios.delete(`/books/${bookId}`);
+    const result = await protectedRequest(
+      async (signal) => {
+        await axios.delete(`/books/${bookId}`, { signal });
+        return true;
+      },
+      `delete-book-${bookId}`
+    );
+    
+    if (result) {
       toast.success('Book deleted successfully');
       fetchBooks();
-    } catch (err) {
-      toast.error('Failed to delete book');
     }
-  }, [fetchBooks]);
+  }, [fetchBooks, protectedRequest]);
 
   const handleSearch = useCallback((e) => {
     e.preventDefault();
@@ -62,7 +72,8 @@ const AllBooks = React.memo(({ user }) => {
 
   useEffect(() => {
     fetchBooks();
-  }, [order]);
+    return cancelAll;
+  }, [order, fetchBooks, cancelAll]);
 
   return (
     <div className="container">
