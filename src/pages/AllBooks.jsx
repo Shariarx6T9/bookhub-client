@@ -6,6 +6,8 @@ import SkeletonLoader from "../components/SkeletonLoader";
 import toast from "react-hot-toast";
 import { useApiProtection } from "../hooks/useApiProtection";
 import { useDebounce } from "../hooks/useDebounce";
+import { useConfirm } from "../hooks/useConfirm";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const AllBooks = React.memo(({ user }) => {
   const [books, setBooks] = useState([]);
@@ -13,8 +15,8 @@ const AllBooks = React.memo(({ user }) => {
   const [q, setQ] = useState("");
   const debouncedQ = useDebounce(q, 300);
   const [loading, setLoading] = useState(true);
-
   const { protectedRequest, cancelAll } = useApiProtection();
+  const { dialog, confirm, cancel } = useConfirm();
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
@@ -30,8 +32,9 @@ const AllBooks = React.memo(({ user }) => {
     setLoading(false);
   }, [order, debouncedQ, protectedRequest]);
 
-  const handleDelete = useCallback(async (bookId) => {
-    if (!window.confirm('Are you sure you want to delete this book?')) return;
+  const handleDelete = useCallback(async (bookId, bookTitle) => {
+    const confirmed = await confirm('Delete Book', `Are you sure you want to delete "${bookTitle}"? This action cannot be undone.`);
+    if (!confirmed) return;
     
     const result = await protectedRequest(
       async (signal) => {
@@ -45,7 +48,7 @@ const AllBooks = React.memo(({ user }) => {
       toast.success('Book deleted successfully');
       fetchBooks();
     }
-  }, [fetchBooks, protectedRequest]);
+  }, [confirm, protectedRequest, fetchBooks]);
 
   const handleSearch = useCallback((e) => {
     e.preventDefault();
@@ -185,7 +188,7 @@ const AllBooks = React.memo(({ user }) => {
                                 </svg>
                               </Link>
                               <button 
-                                onClick={() => handleDelete(book._id)}
+                                onClick={() => handleDelete(book._id, book.title)}
                                 className="action-btn delete-btn"
                                 title="Delete Book"
                               >
@@ -205,6 +208,14 @@ const AllBooks = React.memo(({ user }) => {
           </div>
         </div>
       )}
+      
+      <ConfirmDialog
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        onConfirm={dialog.onConfirm}
+        onCancel={cancel}
+      />
     </div>
   );
 });

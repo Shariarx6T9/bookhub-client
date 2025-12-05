@@ -1,13 +1,16 @@
 // client/src/pages/MyBooks.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "../services/axiosInstance";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useConfirm } from "../hooks/useConfirm";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function MyBooks({ user }) {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { dialog, confirm, cancel } = useConfirm();
 
   const fetch = async () => {
     if (!user) return;
@@ -22,17 +25,18 @@ export default function MyBooks({ user }) {
     }
   };
 
-  const remove = async (id) => {
-    const yes = window.confirm("Are you sure you want to delete this book?");
-    if (!yes) return;
+  const handleDelete = useCallback(async (bookId, bookTitle) => {
+    const confirmed = await confirm('Delete Book', `Are you sure you want to delete "${bookTitle}"? This action cannot be undone.`);
+    if (!confirmed) return;
+    
     try {
-      await axios.delete(`/books/${id}`);
+      await axios.delete(`/books/${bookId}`);
       toast.success("Deleted successfully");
-      setBooks((prev) => prev.filter((b) => b._id !== id));
+      setBooks((prev) => prev.filter((b) => b._id !== bookId));
     } catch (err) {
       toast.error("Failed to delete");
     }
-  };
+  }, [confirm]);
 
   useEffect(() => {
     fetch();
@@ -139,7 +143,7 @@ export default function MyBooks({ user }) {
                           </svg>
                         </Link>
                         <button 
-                          onClick={() => remove(book._id)}
+                          onClick={() => handleDelete(book._id, book.title)}
                           className="action-btn delete-btn"
                           title="Delete Book"
                         >
@@ -156,6 +160,14 @@ export default function MyBooks({ user }) {
           </div>
         </div>
       )}
+      
+      <ConfirmDialog
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        onConfirm={dialog.onConfirm}
+        onCancel={cancel}
+      />
     </div>
   );
 }
