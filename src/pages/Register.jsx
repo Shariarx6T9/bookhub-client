@@ -8,7 +8,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 export default function Register(){
   const nav = useNavigate();
   const [form, setForm] = useState({ name:'', email:'', photo:'', password:'' });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
 
   const validatePassword = (password) => {
@@ -137,15 +137,15 @@ export default function Register(){
           </div>
           
           <button 
-            className="btn w-full" 
+            className="btn w-full flex items-center justify-center gap-2" 
             type="submit" 
             disabled={loading}
           >
             {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <LoadingSpinner size={20} />
-                Creating Account...
-              </span>
+              <>
+                {/* <LoadingSpinner size={10} /> */}
+                Creating Account ...
+              </>
             ) : (
               'Register'
             )}

@@ -38,7 +38,7 @@ const App = React.memo(() => {
       <div className="min-h-screen flex flex-col">
         <Navbar user={user} />
         <main className="flex-1">
-          <Toaster position="top-right" />
+          <Toaster position="top-right" toastOptions={{ style: { marginTop: '80px' } }} />
           <Suspense fallback={<LoadingSpinner variant="overlay" text="Loading page..." />}>
             <Routes>
               <Route path="/" element={<Home />} />
