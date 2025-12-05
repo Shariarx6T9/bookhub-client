@@ -21,7 +21,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 const App = React.memo(() => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
