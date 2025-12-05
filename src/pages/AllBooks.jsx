@@ -2,13 +2,16 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import axios from "../services/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
+import SkeletonLoader from "../components/SkeletonLoader";
 import toast from "react-hot-toast";
 import { useApiProtection } from "../hooks/useApiProtection";
+import { useDebounce } from "../hooks/useDebounce";
 
 const AllBooks = React.memo(({ user }) => {
   const [books, setBooks] = useState([]);
   const [order, setOrder] = useState("desc");
   const [q, setQ] = useState("");
+  const debouncedQ = useDebounce(q, 300);
   const [loading, setLoading] = useState(true);
 
   const { protectedRequest, cancelAll } = useApiProtection();
@@ -17,15 +20,15 @@ const AllBooks = React.memo(({ user }) => {
     setLoading(true);
     const result = await protectedRequest(
       async (signal) => {
-        const res = await axios.get(`/books?sort=rating&order=${order}&q=${encodeURIComponent(q)}`, { signal });
+        const res = await axios.get(`/books?sort=rating&order=${order}&q=${encodeURIComponent(debouncedQ)}`, { signal });
         return res.data;
       },
-      `fetch-books-${order}-${q}`
+      `fetch-books-${order}-${debouncedQ}`
     );
     
     setBooks(result || []);
     setLoading(false);
-  }, [order, q, protectedRequest]);
+  }, [order, debouncedQ, protectedRequest]);
 
   const handleDelete = useCallback(async (bookId) => {
     if (!window.confirm('Are you sure you want to delete this book?')) return;
@@ -73,7 +76,7 @@ const AllBooks = React.memo(({ user }) => {
   useEffect(() => {
     fetchBooks();
     return cancelAll;
-  }, [order, fetchBooks, cancelAll]);
+  }, [fetchBooks, cancelAll]);
 
   return (
     <div className="container">
@@ -106,7 +109,7 @@ const AllBooks = React.memo(({ user }) => {
       </div>
 
       {loading ? (
-        <LoadingSpinner />
+        <SkeletonLoader type="table" />
       ) : books.length === 0 ? (
         <div className="empty">
           <div className="text-6xl mb-4">📚</div>

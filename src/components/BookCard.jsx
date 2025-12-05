@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import LazyImage from "./LazyImage";
 
 const BookCard = React.memo(({ book }) => {
   const [imageError, setImageError] = useState(false);
@@ -22,12 +23,15 @@ const BookCard = React.memo(({ book }) => {
           </div>
         </div>
       ) : (
-        <img 
+        <LazyImage 
           className="cover" 
           src={book.coverUrl} 
           alt={book.title}
-          onError={handleImageError}
-          loading="lazy"
+          fallback={
+            <div className="cover bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center">
+              <span className="text-white/40 text-xs">{book.title}</span>
+            </div>
+          }
         />
       )}
       <div className="meta">

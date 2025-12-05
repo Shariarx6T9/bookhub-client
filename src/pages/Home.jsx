@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "../services/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 import BookGrid from "../components/BookGrid";
+import SkeletonLoader from "../components/SkeletonLoader";
 import toast from "react-hot-toast";
 import { useApiProtection } from "../hooks/useApiProtection";
 
@@ -113,7 +114,7 @@ const Home = React.memo(() => {
             <h2 className="section-title">Latest Additions</h2>
             <p className="section-subtitle">Discover the newest books added to our collection</p>
           </div>
-          {loading ? <LoadingSpinner /> : <BookGrid books={latestBooks} />}
+          {loading ? <SkeletonLoader /> : <BookGrid books={latestBooks} />}
         </section>
 
         <section className="section">
@@ -169,7 +170,7 @@ const Home = React.memo(() => {
             <h2 className="section-title">Top Rated Books</h2>
             <p className="section-subtitle">Highly recommended by our community</p>
           </div>
-          {loading ? <LoadingSpinner /> : <BookGrid books={topBooks} />}
+          {loading ? <SkeletonLoader /> : <BookGrid books={topBooks} />}
         </section>
       </div>
     </div>

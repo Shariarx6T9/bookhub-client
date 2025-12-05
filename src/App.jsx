@@ -31,7 +31,7 @@ const App = React.memo(() => {
     return unsubscribe;
   }, []);
 
-  if (loading) return <LoadingSpinner />;
+  // if (loading) return <LoadingSpinner />;
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -39,7 +39,7 @@ const App = React.memo(() => {
         <Navbar user={user} />
         <main className="flex-1">
           <Toaster position="top-right" />
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<LoadingSpinner variant="overlay" text="Loading page..." />}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/all-books" element={<AllBooks user={user} />} />
